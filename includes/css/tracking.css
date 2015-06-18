@@ -1,0 +1,59 @@
+.progressbar ol {
+    counter-reset: item;
+    display: inline-block;
+    font: normal normal 12px/18px helvetica, arial, sans-serif;
+    margin: 20px;
+}
+
+.progressbar li {
+    color: #aaa;
+    display: block;
+    float: left;
+    margin-right: 1em;
+}
+
+.progressbar li:before {
+    content: counter(item);
+    counter-increment: item;
+    display: inline-block;
+    text-align: center;
+    line-height: 25px;
+    width: 25px;  
+    height: 25px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: .5em;
+    margin-bottom: .25em;
+    color: #fff;
+    font-size: 13px;
+    font-wight: bold;
+}
+
+.progressbar .selected-step-1 li.step-1,
+.progressbar .selected-step-2 li.step-2,
+.progressbar .selected-step-3 li.step-3,
+.progressbar .selected-step-4 li.step-4,
+.progressbar .selected-step-5 li.step-5,
+.progressbar .selected-step-6 li.step-6,
+.progressbar .selected-step-7 li.step-7,
+.progressbar .selected-step-8 li.step-8,
+.progressbar .selected-step-9 li.step-9 {
+    color: red;
+    font-weight: bold;
+}
+
+.progressbar .selected-step-1 li.step-1:before,
+.progressbar .selected-step-2 li.step-2:before,
+.progressbar .selected-step-3 li.step-3:before,
+.progressbar .selected-step-4 li.step-4:before,
+.progressbar .selected-step-5 li.step-5:before,
+.progressbar .selected-step-6 li.step-6:before,
+.progressbar .selected-step-7 li.step-7:before,
+.progressbar .selected-step-8 li.step-8:before,
+.progressbar .selected-step-9 li.step-9:before {
+    background-color: red;
+    font-weight: bold;
+}
+
+
+/* code by @naoisegolden */

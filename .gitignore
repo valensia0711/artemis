@@ -1,0 +1,9 @@
+Constants.php
+*.sublime-project
+*.sublime-workspace
+/nbproject/private/
+/nbproject
+
+# Common OSX auto generated files
+.DS_Store
+/Utils/Constants.php
