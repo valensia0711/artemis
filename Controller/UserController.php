@@ -77,6 +77,8 @@ class UserController {
                                      'password'=>$param['pass'],
                                      'contact'=>$param['contact'],
                                      'notification'=>$param['subscribe']));
+                                     'cell'=>$param['cell'],
+                                     'position'=>$param['position']));
             }
             else{
                 $stmt = $conn->prepare("UPDATE users SET email = :email, contact = :contact, notification = :notification, cell = :cell, position = :position WHERE id = :id");
