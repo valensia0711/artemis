@@ -224,7 +224,7 @@ class DutyController {
                 $params['supervisor_id'] = $user->getID();
                 $grab->execute($params);
                 if($grab->rowCount() != 1){
-                    throw new Exception('Duty grab failed for unknown reason. Contact technical cell (James).');
+                    throw new Exception('Duty grab failed for unknown reason. Contact technical cell.');
                 }
                 $_SESSION['success'] = 'Successfully grabbed the duty(ies)';
                 return true;
@@ -263,7 +263,7 @@ class DutyController {
                     VALUES (:supervisor_id, :schedule_id, :date, :month, :year, :location)");
                 $release->execute($params);
                 if($release->rowCount() != 1){
-                    throw new Exception("Duty release insertion failed! Contact technical cell (James).");
+                    throw new Exception("Duty release insertion failed! Contact technical cell.");
                     //die("Duty release insertion failed!");
                 }
                 $_SESSION['success'] = 'Successfully dropped the duty(ies)';
@@ -285,7 +285,7 @@ class DutyController {
                     VALUES (:supervisor_id, :schedule_id, :date, :month, :year, :location)");
                 $release->execute($params);
                 if($release->rowCount() != 1){
-                    throw new Exception("Duty release insertion failed!  Contact technical cell (James).");
+                    throw new Exception("Duty release insertion failed!  Contact technical cell.");
                     //die("Duty release insertion failed!");
                 }
                 $_SESSION['success'] = 'Successfully dropped the duty(ies)';

@@ -76,7 +76,7 @@ class UserController {
                                      'email'=>$param['email'],
                                      'password'=>$param['pass'],
                                      'contact'=>$param['contact'],
-                                     'notification'=>$param['subscribe']));
+                                     'notification'=>$param['subscribe'],
                                      'cell'=>$param['cell'],
                                      'position'=>$param['position']));
             }
