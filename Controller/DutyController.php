@@ -63,13 +63,23 @@ class DutyController {
     }
     
     public function assignTemporaryDuty($user, $duty) {
-        if ($this->getSupervisorID($duty) >= 0) {
+        try {
             $oldUser = new User($this->getSupervisorID($duty), null, null, null, null, null, null, null);
-            $this->releaseDuty($oldUser,$duty);
+            if ($this->getSupervisorID($duty) >= 0) {
+                $this->releaseDuty($oldUser,$duty);
+            }
+            if ($this->grabDuty($user,$duty,false)) {
+                $_SESSION['success'] = 'Successfully assign temporary duty(ies)';
+                return true;
+            } else {
+                $this->grabDuty($oldUser,$duty,false);
+                throw new Exception("Unexpected error occured. Contact technical cell");
+            }
+        } catch(Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header("Location: index");
+            exit;
         }
-        $this->grabDuty($user,$duty,false);
-        $_SESSION['success'] = 'Successfully assign temporary duty(ies)';
-        return true;
     }
     
     private function isOpeningDuty($duty) {
@@ -201,14 +211,16 @@ class DutyController {
                     throw new Exception('The user have a duty in the same time in the other venues.');
                 }
             }
-            
+
             $this->conn = connect();
             $released = $this->conn->prepare("SELECT count(*) FROM released_duty 
                 WHERE schedule_id = :schedule_id AND date = :date AND month = :month 
                 AND year = :year AND venue = :location");
             $released->execute($params);
+
+            //throw new Exception($released->fetchColumn());
             
-            if($released->fetchColumn() == 1){
+            if($released->fetchColumn() == 1) {
                 //Remove from released_duty first to prevent multiple insert.
                 $delete_released = $this->conn->prepare("DELETE FROM released_duty
                     WHERE schedule_id = :schedule_id AND date = :date AND month = :month 
