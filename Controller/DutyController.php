@@ -67,7 +67,7 @@ class DutyController {
             $oldUser = new User($this->getSupervisorID($duty), null, null, null, null, null, null, null);
             $this->releaseDuty($oldUser,$duty);
         }
-        $this->grabDuty($user,$duty);
+        $this->grabDuty($user,$duty,false);
         $_SESSION['success'] = 'Successfully assign temporary duty(ies)';
         return true;
     }
@@ -157,45 +157,47 @@ class DutyController {
         return $hours;
     }
     
-    public function grabDuty($user, $duty) {
+    public function grabDuty($user, $duty, $grabRestriction = true) {
         
         //if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'YIH' && $duty->getTime() == '08.30-09.00'){
         //    return false;
         //}
 
         try{
-            if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'yih' && $this->isOpeningDuty($duty)){
-                throw new Exception('You have the key to open the centre meh? Only MC can grab opening YIH duty.');
-            }
-            
-            if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'yih' && $this->isClosingDuty($duty)){
-                throw new Exception('You have the key to close the centre meh? Only MC can grab closing YIH duty.');
-            }
-            
-            if($user->getPosition() == 'Subcom' && $this->isMoreThanKHours($user, $duty, 400)) {
-                throw new Exception('Subcom is not allowed to have more than 4 hours consecutive duty.');
-            }
-            
-            if($user->getPosition() == 'Subcom' && $this->isConsecutiveDiffPlace($user, $duty)) {
-                throw new Exception('Subcom is not allowed to have consecutive duty in different place.');
-            }
-            
-            if($user->getPosition() == 'Subcom' && 
-               $this->countDutyHours($user->getID(), $duty) + $this->getIntervalDuty($duty->getID()) > 14) {
-                throw new Exception('Subcom is not allowed to have more than 14 duty hours in a week.');
-            }
-            
-            $params = array('schedule_id' => $duty->getID(),
-                            'date' => $duty->getDate(),
-                            'month' => $duty->getMonth(),
-                            'year' => $duty->getYear(),
-                            'location' => $duty->getLocation());
-            
-            $otherLocation = ($duty->getLocation() == "yih" ? "cl" : "yih");
-            $dutyOtherLocation = new DailyDuty($duty->getID(), null, null, null, $otherLocation, $duty->getDate(), $duty->getMonth(), $duty->getYear());
-            
-            if ($user->getID() > 0 && $this->getSupervisorID($dutyOtherLocation) == $user->getID()) {
-                throw new Exception('The user have a duty in the same time in the other venues.');
+            if ($grabRestriction) {
+                if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'yih' && $this->isOpeningDuty($duty)){
+                    throw new Exception('You have the key to open the centre meh? Only MC can grab opening YIH duty.');
+                }
+                
+                if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'yih' && $this->isClosingDuty($duty)){
+                    throw new Exception('You have the key to close the centre meh? Only MC can grab closing YIH duty.');
+                }
+                
+                if($user->getPosition() == 'Subcom' && $this->isMoreThanKHours($user, $duty, 400)) {
+                    throw new Exception('Subcom is not allowed to have more than 4 hours consecutive duty.');
+                }
+                
+                if($user->getPosition() == 'Subcom' && $this->isConsecutiveDiffPlace($user, $duty)) {
+                    throw new Exception('Subcom is not allowed to have consecutive duty in different place.');
+                }
+                
+                if($user->getPosition() == 'Subcom' && 
+                   $this->countDutyHours($user->getID(), $duty) + $this->getIntervalDuty($duty->getID()) > 14) {
+                    throw new Exception('Subcom is not allowed to have more than 14 duty hours in a week.');
+                }
+                
+                $params = array('schedule_id' => $duty->getID(),
+                                'date' => $duty->getDate(),
+                                'month' => $duty->getMonth(),
+                                'year' => $duty->getYear(),
+                                'location' => $duty->getLocation());
+                
+                $otherLocation = ($duty->getLocation() == "yih" ? "cl" : "yih");
+                $dutyOtherLocation = new DailyDuty($duty->getID(), null, null, null, $otherLocation, $duty->getDate(), $duty->getMonth(), $duty->getYear());
+                
+                if ($user->getID() > 0 && $this->getSupervisorID($dutyOtherLocation) == $user->getID()) {
+                    throw new Exception('The user have a duty in the same time in the other venues.');
+                }
             }
             
             $this->conn = connect();
