@@ -185,16 +185,18 @@ class DutyController {
                    $this->countDutyHours($user->getID(), $duty) + $this->getIntervalDuty($duty->getID()) > 14) {
                     throw new Exception('Subcom is not allowed to have more than 14 duty hours in a week.');
                 }
+            }
                 
-                $params = array('schedule_id' => $duty->getID(),
-                                'date' => $duty->getDate(),
-                                'month' => $duty->getMonth(),
-                                'year' => $duty->getYear(),
-                                'location' => $duty->getLocation());
+            $params = array('schedule_id' => $duty->getID(),
+                            'date' => $duty->getDate(),
+                            'month' => $duty->getMonth(),
+                            'year' => $duty->getYear(),
+                            'location' => $duty->getLocation());
+            
+            $otherLocation = ($duty->getLocation() == "yih" ? "cl" : "yih");
+            $dutyOtherLocation = new DailyDuty($duty->getID(), null, null, null, $otherLocation, $duty->getDate(), $duty->getMonth(), $duty->getYear());
                 
-                $otherLocation = ($duty->getLocation() == "yih" ? "cl" : "yih");
-                $dutyOtherLocation = new DailyDuty($duty->getID(), null, null, null, $otherLocation, $duty->getDate(), $duty->getMonth(), $duty->getYear());
-                
+            if ($grabRestriction) {
                 if ($user->getID() > 0 && $this->getSupervisorID($dutyOtherLocation) == $user->getID()) {
                     throw new Exception('The user have a duty in the same time in the other venues.');
                 }
