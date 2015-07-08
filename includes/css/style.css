@@ -131,6 +131,10 @@ body {
     background-color: white;
 }
 
+.pending_cell {
+    background-color : red;
+}
+
 .selected_cell {
     background-color: #8FBC8F;
 }

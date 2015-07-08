@@ -24,10 +24,10 @@
         unset($_SESSION['success']);
     }
     if (isset($_POST['assign_to'])) {
-        $newUser = new User($_POST['assign_to'], null, null, null, null, null, null, null);
         for ($i = 1; $i <= 119; ++$i) {
             foreach (['yih','cl'] as $j) {
-                if (isset($_POST[$j."_".$i])) {
+                if ($_POST["assignto_".$j."_".$i] != 'unset') {
+                    $newUser = new User($_POST["assignto_".$j."_".$i], null, null, null, null, null, null, null);
                     $duty = new Duty($i, null, null, null, $j);
                     $dutyController->assignPermanentDuty($newUser,$duty);
                 }
@@ -60,26 +60,27 @@
                 </div>
                 <div class="col-sm-5 well">
                     <a class="btn btn-default" href="edittempschedule">Edit Temporary</a> 
-                    <button class="btn btn-default" onclick="clearSelection('yih');clearSelection('cl')">Clear Selection</button>
+                    <button class="btn btn-default" onclick="clearAll()">Clear Selection</button>
                 </div>
             </div>
         <div class="row">
         <form action="editschedule" method="post">
             <p align="center">
             <label for="assign_to">Assign slot to:</label>
-            <select name="assign_to">
+            <select id="assign_to" name="assign_to" onchange=change()>
                 <?php
                     $allUsers = $userController->getAllUser();
                     usort($allUsers, function($a, $b) {
                         return strcmp($a['name'], $b['name']);
                     });
-                    echo "<option value='0'>NO_DUTY</option>";
+                    echo "<option value='unset'>Choose wisely</option>";
+                    echo "<option value='0' >NO_DUTY</option>";
                     for ($i = 0; $i < count($allUsers); ++$i) {
                         echo "<option value='".$allUsers[$i]['id']."'>".$allUsers[$i]['name']."</option>";
                     }
                 ?>
-                <input type='submit' class='btn btn-primary'/>
             </select>
+            <input type='submit' class='btn btn-primary'/>
             </p>
             <table border=1 class="table edittable">
                 <tr class='table_header'>
@@ -107,15 +108,16 @@
                             $onclickFunction = "\"cellClickHandler('" . $location . "', " . $dutyID . ", '" . $day ."')\"";
                             $onmouseoverFunction = "\"cellMouseoverHandler('" . $location . "', " . $dutyID . ", '" . $day ."')\"";
                             $id = "cell_" . $location . "_" . $dutyID . "_" . $day;
+                            $assignto = "assignto_" . $location . "_" . $dutyID;
+                            echo "<td class='duty_cell' ";
                             if ($name == "Drop") {
-                                echo "<td class='dropped_cell' id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
+                                echo "class='dropped_cell' ";
                             } else if ($name == "NO_DUTY") {
-                                echo "<td class='noduty_cell' id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
-                            } else {
-                                echo "<td id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
+                                echo "class='noduty_cell' ";
                             }
-                            echo $name;
-                            echo "<input type='checkbox' name='".$location."_".$dutyID."' style='display:none' />";
+                            echo "id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
+                            echo "<p> $name </p>";
+                            echo "<input type='hidden' name='$assignto' id='$assignto' value='unset'/>";
                             echo "</td>";
                         }
                 }
@@ -147,33 +149,39 @@
   <script>
     var currentSelection = null;
     var selections = {};
+    var selected_cell = {};
+
+    function clearAll() {
+        $('.duty_cell').each(function() {
+            var dutyDay = $(this).attr('id').split('_')[3];
+            var dutyID = $(this).attr('id').split('_')[2];
+            var dutyLoc = $(this).attr('id').split('_')[1];
+            $(this).removeClass('selected_cell');
+            selected_cell[dutyLoc + "_" + dutyID] = false;
+        });
+    }
 
     function clearSelection(location, day) {
-      $('input').each(function() {
-        if ($(this).attr('type') === 'checkbox') {
-          var par = $(this).parent();
-          var dutyDay = par.attr('id').split('_')[3];
-          var dutyLoc = par.attr('id').split('_')[1];
-          console.log(par.attr('id'));
-          console.log(dutyDay);
-          console.log(dutyLoc);
-          if (dutyDay === day && dutyLoc == location) {
-            $(this).prop('checked', false);
-            par.removeClass('selected_cell');
-          }
-        }
-      });
+        $('.duty_cell').each(function() {
+            var dutyDay = $(this).attr('id').split('_')[3];
+            var dutyID = $(this).attr('id').split('_')[2];
+            var dutyLoc = $(this).attr('id').split('_')[1];
+            if (dutyDay === day && dutyLoc == location) {
+                $(this).removeClass('selected_cell');
+                selected_cell[dutyLoc + "_" + dutyID] = false;
+            }
+        });
     }
 
     function select(dutyLocation, dutyId, dutyDay) {
       var name = dutyLocation + '_' + dutyId;
       $('input[name=' + name + ']').prop('checked', true);
       $('#cell_' + name + '_' + dutyDay).addClass('selected_cell');
+      selected_cell[name] = true;
     }
 
     function getCell(dutyLocation, dutyId) {
       var cellId = "cell_" + dutyLocation + "_" + dutyId;
-      console.log(cellId);
       return $('#' + cellId);
     }
 
@@ -215,6 +223,25 @@
           select(dutyLocation, i, dutyDay);
         }
       }
+    }
+
+    function change() {
+        var userID = $("#assign_to").val();
+        var username = $("#assign_to option:selected").text();
+        $("#assign_to").val('unset');
+        $('.duty_cell').each(function() {
+            var dutyDay = $(this).attr('id').split('_')[3];
+            var dutyID = $(this).attr('id').split('_')[2];
+            var dutyLoc = $(this).attr('id').split('_')[1];
+            var assignto = "assignto" + "_" + dutyLoc + "_" + dutyID;
+            var name = dutyLoc + "_" + dutyID;
+            if (name in selected_cell && selected_cell[name]) {
+                $(this).addClass("pending_cell");
+                $($(this).children("p")).html(username);
+                $("#" + assignto).attr("value",userID);
+            }
+        });
+        clearAll();
     }
 
   </script>
