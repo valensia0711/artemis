@@ -28,7 +28,11 @@
             $str .= "L:".$_POST['paperleft']."%.\nM:".$_POST['papermiddle']."%.\nR:".$_POST['paperright']."%\n";
         }
         $str .= "Cartridge: ".$_POST['cartridge']."\n";
-        $str .= "Reprint Ez-link value: ".$_POST['ezlink']."\nRemarks: ";
+        if ($_POST['venue'] == "YIH") {
+            $str .= "Reprint Ez-link value: ".$_POST['ezlink']."\nRemarks: ";
+        } else if ($_POST['venue'] == "CL") {
+            $str .= "Cashbox: ".$_POST['cashbox']."\nRemarks: ";
+        }
         $str .= (trim($_POST['content'])) == "" ? "n/a" : $_POST['content']."\n";
         if($announcement_controller->addAnnouncement(array('title'=>$title,
                 'content'=>$str,'time'=>$now_str,'timeline'=>$now))){
@@ -132,12 +136,26 @@
                         <input type = "text" id="cartridge" name = "cartridge" class="form-control" required>
                     </div>
                 </div>
-                <div class = "form-group">
+
+                <?php
+                if ($_POST['venue'] == 'YIH') {?>
+                    <div class = "form-group">
                     <label for="ezlink" class = "col-sm-2 control-label">Reprint EZ-Link: </label>
                     <div class = "col-sm-4">
                         <input type = "text" id="ezlink" name = "ezlink" class = "form-control" required>
                     </div>
                 </div>
+                <?php
+                } else if ($_POST['venue'] == 'CL') { ?>
+                <div class = "form-group">
+                    <label for="ezlink" class = "col-sm-2 control-label">Cashbox: </label>
+                    <div class = "col-sm-4">
+                        <input type = "text" id="cashbox" name = "cashbox" class = "form-control" required>
+                    </div>
+                </div>
+                <?php
+                } ?>
+
                 <div class="form-group">
                     <label for="remarks" class = "col-sm-2 control-label">Remarks: </label>
                     <div class="col-sm-4">
