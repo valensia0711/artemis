@@ -111,6 +111,7 @@ body {
 .table {
     background-color: white;
 }
+
 .dropped_cell {
     background-color: orange;
 }
@@ -131,8 +132,20 @@ body {
     background-color: white;
 }
 
+.available_cell {
+    background-color: #7FFF00;
+}
+
+.not_available_cell {
+    background-color: #FF4500;
+}
+
 .pending_cell {
     background-color : red;
+}
+
+.pending_schedule_cell {
+    background-color : orange;
 }
 
 .selected_cell {
