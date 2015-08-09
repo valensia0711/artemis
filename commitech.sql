@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 18, 2015 at 06:48 AM
+-- Generation Time: Aug 09, 2015 at 08:21 AM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `commitech`
+-- Database: `commitech-artemis`
 --
 
 -- --------------------------------------------------------
@@ -417,6 +417,46 @@ CREATE TABLE IF NOT EXISTS `released_duty` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `schedule_availability`
+--
+
+CREATE TABLE IF NOT EXISTS `schedule_availability` (
+  `id` int(11) NOT NULL,
+  `supervisor_id` int(11) NOT NULL,
+  `schedule_id` int(11) NOT NULL,
+  `availability` varchar(20) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `schedule_availability`
+--
+
+INSERT INTO `schedule_availability` (`id`, `supervisor_id`, `schedule_id`, `availability`) VALUES
+(1, 1, 1, 'AVAILABLE'),
+(19, 1, 6, 'AVAILABLE'),
+(20, 1, 7, 'AVAILABLE'),
+(21, 1, 8, 'AVAILABLE'),
+(22, 1, 9, 'AVAILABLE'),
+(67, 1, 2, 'NOT_AVAILABLE'),
+(68, 1, 3, 'NOT_AVAILABLE'),
+(69, 1, 4, 'NOT_AVAILABLE'),
+(70, 1, 5, 'NOT_AVAILABLE'),
+(71, 1, 12, 'AVAILABLE'),
+(72, 1, 13, 'AVAILABLE'),
+(73, 1, 14, 'AVAILABLE'),
+(77, 1, 28, 'NOT_AVAILABLE'),
+(78, 1, 29, 'NOT_AVAILABLE'),
+(79, 1, 21, 'AVAILABLE'),
+(80, 1, 22, 'AVAILABLE'),
+(81, 1, 23, 'AVAILABLE'),
+(82, 1, 24, 'AVAILABLE'),
+(83, 1, 25, 'AVAILABLE'),
+(84, 1, 26, 'AVAILABLE'),
+(85, 1, 27, 'AVAILABLE');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `sign`
 --
 
@@ -651,6 +691,12 @@ ALTER TABLE `released_duty`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `schedule_availability`
+--
+ALTER TABLE `schedule_availability`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `sign`
 --
 ALTER TABLE `sign`
@@ -710,6 +756,11 @@ ALTER TABLE `grabbed_duty`
 --
 ALTER TABLE `released_duty`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `schedule_availability`
+--
+ALTER TABLE `schedule_availability`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=86;
 --
 -- AUTO_INCREMENT for table `sign`
 --
