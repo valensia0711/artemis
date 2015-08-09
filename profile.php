@@ -44,6 +44,10 @@
                 unset($_SESSION['error']);
             } 
 
+            if ($user_controller->isAdmin($_SESSION['user_id']) != 0 || isset($_SESSION['original_login'])) {
+                echo "<a class=\"btn btn-primary\" href=\"loginas\">Login as</a>";
+            }
+
         ?>
         <h1> User Profile</h1>
         <br/>

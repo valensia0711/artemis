@@ -13,6 +13,10 @@
     $userController = UserController::getInstance();
     $dutyController = DutyController::getInstance();
     $userID = $_SESSION['user_id'];
+    if ($userController->getDutyStatus($_SESSION['user_id']) == 0) {
+        header("Location: tracking");
+        exit;
+    }
     if (isset($_POST['assign_to'])) {
         for ($i = 1; $i <= 119; ++$i) {
             if ($_POST["set_availability_".$i] != 'unset') {
