@@ -28,6 +28,8 @@ class ScheduleController {
         }
         $queryCondition['availability'] = $availability;
         $this->scheduleAvailability->insertData($queryCondition);
+        $_SESSION['success'] = 'Successfully set availability(ies)';
+        return true;
     }
 
     public function getAvailability($user, $duty) {
@@ -38,6 +40,13 @@ class ScheduleController {
         }
         $availability = $this->scheduleAvailability->get($queryCondition)[0]['availability'];
         return $availability;
+    }
+
+    public function clearAllAvailability() {
+        $queryCondition = array();
+        $this->scheduleAvailability->deleteData($queryCondition);
+        $_SESSION['success'] = 'Successfully clear availability(ies)';
+        return true;
     }
 
     public function setAvailabilities($user, $availabilities) {

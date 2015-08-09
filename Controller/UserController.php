@@ -117,6 +117,15 @@ class UserController {
             echo 'ERROR: ' . $e->getMessage();
         }
     }
+
+    public function getAllActiveUser() {
+        try{
+            $queryCondition = array('status' => 1);
+            return $this->userList->get($queryCondition);
+        } catch (PDOException $e) {
+            echo 'ERROR: ' . $e->getMessage();
+        }
+    }
     
     //check if there is such user in the database (based on matricnumber)
     private function isUserExist($user, $conn){

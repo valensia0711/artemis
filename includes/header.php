@@ -20,7 +20,7 @@
                 <li class="<?php echo ($page == "guide" ? "active": "")?>"><a href="guide">Guide</a></li>   
                 <li class="<?php echo ($page == "postEOD" ? "active": "")?>"><a href="postEOD">Post EOD </a></li>
                 <li class="<?php echo ($page == "tracking" ? "active": "")?>"><a href="tracking">Money Tracking</a></li>
-                <li class="<?php echo ($page == "scheduleavailability" ? "active": "")?>"><a href="scheduleavailability">Schedule</a></li>
+                <li class="<?php echo ($page == "scheduleavailability" ? "active": "")?>"><a href="scheduleavailability">Schedule Availability</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="<?php echo ($page == "user" ? "active": "")?>"><a href="profile"><?php echo $_SESSION['user_name'];?></a></li>

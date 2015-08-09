@@ -13,14 +13,6 @@
     $userController = UserController::getInstance();
     $dutyController = DutyController::getInstance();
     $userID = $_SESSION['user_id'];
-    if(isset($_SESSION['error'])){
-        echo '<div class="alert alert-danger">'.$_SESSION['error'].'</div>';
-        unset($_SESSION['error']);
-    }
-    if(isset($_SESSION['success'])){
-        echo '<div class="alert alert-success">'.$_SESSION['success'].'</div>';
-        unset($_SESSION['success']);
-    }
     if (isset($_POST['assign_to'])) {
         for ($i = 1; $i <= 119; ++$i) {
             if ($_POST["set_availability_".$i] != 'unset') {
@@ -30,8 +22,8 @@
                 $scheduleController->setAvailability($user, $duty, $availability);
             }
         }
-        //header("Location: scheduleavailability");
-        //exit;
+        header("Location: scheduleavailability");
+        exit;
     }
     $dayList = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
     $day = "Monday";
@@ -51,6 +43,16 @@
         <?php $page = "scheduleavailability"; ?>
         <?php include(dirname(__FILE__).'/includes/header.php');?>
         <div class="container">
+            <?php
+                if(isset($_SESSION['error'])){
+                    echo '<div class="alert alert-danger">'.$_SESSION['error'].'</div>';
+                    unset($_SESSION['error']);
+                }
+                if(isset($_SESSION['success'])){
+                    echo '<div class="alert alert-success">'.$_SESSION['success'].'</div>';
+                    unset($_SESSION['success']);
+                }
+            ?>
             <div class="row">
                 <div class="col-sm-7">
                     <h1>Enter Schedule Availability</h1>
@@ -58,7 +60,7 @@
                 <div class="col-sm-5 well">
                     <?php
                     if ($userController->isAdmin($userID)) {
-                        echo "<a class=\"btn btn-default\" href=\"editscheduleavailability\">Admin Panel</a>";
+                        echo "<a class=\"btn btn-default\" href=\"processscheduleavailability\">Admin Panel</a>";
                     }
                     ?>
                     <button class="btn btn-default" onclick="clearAll()">Clear Selection</button>
@@ -78,6 +80,7 @@
             </select>
             <input type='submit' class='btn btn-primary'/>
             </p>
+            <p align="center">Orange cells are pending changes. Click the blue submit button to save pending changes</p>
             <table border=1 class="table edittable">
                 <tr class='table_header'>
                     <td style="width: 6%">Date</td>
@@ -141,7 +144,7 @@
                     $cellClass = ($i % 2 == 0 ? "yellow_cell" : "white_cell");
                     echo "<tr class=$cellClass>\n";
                         echo "<th class=\"breakword\">".$day."</th>";
-                        printTable("yih");
+                        printTable();
                     echo "</tr>\n";
                 }
                 ?>
