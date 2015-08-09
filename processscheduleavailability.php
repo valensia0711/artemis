@@ -152,7 +152,7 @@
         <?php include(dirname(__FILE__).'/includes/footer.php');?>
         <script>
             function clearAvail() {
-                if (confirm("Are you sure to remove all availability and change it to UNSET?")) {
+                if (confirm("Are you sure to remove all availability of all users and change it to UNSET? This button should only be pressed at the beginning of a semester")) {
                     $.ajax({
                         type:'POST',
                         url:'processscheduleavailability',
