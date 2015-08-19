@@ -140,6 +140,10 @@ body {
     background-color: #FF4500;
 }
 
+.black_cell {
+    background-color: black;
+}
+
 .pending_cell {
     background-color : red;
 }

@@ -54,7 +54,7 @@
                 </div>
                 <div class="col-sm-5 well">
                     <a class="btn btn-default" href="scheduleavailability">User Panel</a>
-                    <a class="btn btn-primary" onclick=clearAvail()>Clear Availability</a>
+                    <a class="btn btn-danger" onclick=clearAvail()>Clear Availability</a>
                 </div>
             </div>
         <div class="row">
@@ -98,6 +98,7 @@
 
                 <?php
                 function printTable($userID) {
+                    $blackIDs = [103, 104, 105, 115, 116, 117, 118, 119];
                     global $userController;
                     global $dutySchedule;
                     global $day;
@@ -106,27 +107,31 @@
                     for ($j = 0; $j < count($dutySchedule); ++$j)
                     {
                         $dutyID = $dutySchedule[$j]['id'];
+                        if (in_array($dutyID,$blackIDs)) {
+                            echo "<td class='black_cell'></td>";
+                        } else {
 
-                        $user = new User($userID, null, null, null, null, null, null, null);
-                        $duty = new Duty($dutyID, null, null, null, null);
-                        $availability = $scheduleController->getAvailability($user, $duty);
+                            $user = new User($userID, null, null, null, null, null, null, null);
+                            $duty = new Duty($dutyID, null, null, null, null);
+                            $availability = $scheduleController->getAvailability($user, $duty);
 
-                        echo "<td class='duty_cell";
-                        if ($availability == "AVAILABLE") {
-                            echo " available_cell' ";
-                        } else if ($availability == "NOT_AVAILABLE") {
-                            echo " not_available_cell' ";
-                        } else if ($availability == "UNSET") {
-                            echo "' ";
+                            echo "<td class='duty_cell";
+                            if ($availability == "AVAILABLE") {
+                                echo " available_cell' ";
+                            } else if ($availability == "NOT_AVAILABLE") {
+                                echo " not_available_cell' ";
+                            } else if ($availability == "UNSET") {
+                                echo "' ";
+                            }
+                            echo ">";
+                            if ($availability == "NOT_AVAILABLE") {
+                                $availability = "NO";
+                            } else if ($availability == "AVAILABLE") {
+                                $availability = "YES";
+                            }
+                            echo "<p> $availability </p>";
+                            echo "</td>";
                         }
-                        echo ">";
-                        if ($availability == "NOT_AVAILABLE") {
-                            $availability = "NO";
-                        } else if ($availability == "AVAILABLE") {
-                            $availability = "YES";
-                        }
-                        echo "<p> $availability </p>";
-                        echo "</td>";
                     }
                 }
 

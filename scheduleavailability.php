@@ -19,7 +19,7 @@
     }
     if (isset($_POST['assign_to'])) {
         for ($i = 1; $i <= 119; ++$i) {
-            if ($_POST["set_availability_".$i] != 'unset') {
+            if (isset($_POST["set_availability_".$i]) && $_POST["set_availability_".$i] != 'unset') {
                 $user = new User($userID, null, null, null, null, null, null, null);
                 $duty = new Duty($i, null, null, null, null);
                 $availability = $_POST["set_availability_".$i];
@@ -73,7 +73,7 @@
         <div class="row">
         <form action="scheduleavailability" method="post">
             <p align="center">
-            <label for="assign_to">Assign slot to:</label>
+            <label for="assign_to">Set the selected cells to:</label>
             <select id="assign_to" name="assign_to" onchange=change()>
                 <?php
                     echo "<option value='unset'>Choose wisely</option>";
@@ -99,6 +99,7 @@
 
                 <?php
                 function printTable() {
+                    $blackIDs = [103, 104, 105, 115, 116, 117, 118, 119];
                     global $userController;
                     global $dutySchedule;
                     global $day;
@@ -108,34 +109,37 @@
                     for ($j = 0; $j < count($dutySchedule); ++$j)
                     {
                         $dutyID = $dutySchedule[$j]['id'];
+                        if (in_array($dutyID,$blackIDs)) {
+                            echo "<td class='black_cell'></td>";
+                        } else {
+                            $user = new User($userID, null, null, null, null, null, null, null);
+                            $duty = new Duty($dutyID, null, null, null, null);
+                            $availability = $scheduleController->getAvailability($user, $duty);
 
-                        $user = new User($userID, null, null, null, null, null, null, null);
-                        $duty = new Duty($dutyID, null, null, null, null);
-                        $availability = $scheduleController->getAvailability($user, $duty);
+                            $onclickFunction = "\"cellClickHandler(" . $dutyID . ", '" . $day ."')\"";
+                            $onmouseoverFunction = "\"cellMouseoverHandler(" . $dutyID . ", '" . $day ."')\"";
+                            $id = "cell_" . $dutyID . "_" . $day;
+                            $assignto = "set_availability_" . $dutyID;
 
-                        $onclickFunction = "\"cellClickHandler(" . $dutyID . ", '" . $day ."')\"";
-                        $onmouseoverFunction = "\"cellMouseoverHandler(" . $dutyID . ", '" . $day ."')\"";
-                        $id = "cell_" . $dutyID . "_" . $day;
-                        $assignto = "set_availability_" . $dutyID;
-
-                        echo "<td class='duty_cell";
-                        if ($availability == "AVAILABLE") {
-                            echo " available_cell' ";
-                        } else if ($availability == "NOT_AVAILABLE") {
-                            echo " not_available_cell' ";
-                        } else if ($availability == "UNSET") {
-                            echo "' ";
+                            echo "<td class='duty_cell";
+                            if ($availability == "AVAILABLE") {
+                                echo " available_cell' ";
+                            } else if ($availability == "NOT_AVAILABLE") {
+                                echo " not_available_cell' ";
+                            } else if ($availability == "UNSET") {
+                                echo "' ";
+                            }
+                            //echo "id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
+                            echo "id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
+                            if ($availability == "NOT_AVAILABLE") {
+                                $availability = "NO";
+                            } else if ($availability == "AVAILABLE") {
+                                $availability = "YES";
+                            }
+                            echo "<p> $availability </p>";
+                            echo "<input type='hidden' name='$assignto' id='$assignto' value='unset'/>";
+                            echo "</td>";
                         }
-                        //echo "id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
-                        echo "id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
-                        if ($availability == "NOT_AVAILABLE") {
-                            $availability = "NO";
-                        } else if ($availability == "AVAILABLE") {
-                            $availability = "YES";
-                        }
-                        echo "<p> $availability </p>";
-                        echo "<input type='hidden' name='$assignto' id='$assignto' value='unset'/>";
-                        echo "</td>";
                     }
                 }
 
