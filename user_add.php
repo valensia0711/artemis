@@ -26,15 +26,15 @@
 
 	if(isset($_POST['submit'])){
         $user = new Member(1, $_POST['username'], $_POST['matric'], $_POST['contact'], $_POST['email'], $_POST['cell'], $_POST['position'], 1);
-        $pass = generateRandomString();
+        $pass = '123456';
         $user_controller->addUser($user, $pass);
 
-        $target[] = $user_controller->getUserByMatric($_POST['matric']);
+        /*$target[] = $user_controller->getUserByMatric($_POST['matric']);
         $mailSubject = "NUSSU commIT New Account";
         $mailBody = "Dear {$_POST['username']},\n\nWelcome to NUSSU commIT!\n\nAs part of the duty management, we have created an account for you in our system. The details are:\n
                 Username: {$_POST['username']}\n
                 Password: {$pass}\n\nLogin to ".DOMAIN." with the above details, change your password immediately, and check your particulars.".FOOTER_MESSAGE;
-        sendMail($mailSubject, $mailBody, $target);
+        sendMail($mailSubject, $mailBody, $target);*/
         $_SESSION['success'] = "User Added!";
         header("Location: user_add");
         exit;
