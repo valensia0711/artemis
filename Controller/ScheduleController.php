@@ -323,7 +323,3 @@ class ScheduleController {
     }
 }
 ?>
-
-
-
-
