@@ -31,7 +31,10 @@
                     array("pass" => $hashedPassword,
                     "email" => $_POST['email'],
                     "contact" => $_POST['contact'],
-                    "subscribe" => $subscribe));
+                    "subscribe" => $subscribe,
+                    "cell" => $_POST['cell'],
+                    "position" => $_POST['position'])
+                );
             }
         }else{
             $edit = $user_controller->editUser($id, 

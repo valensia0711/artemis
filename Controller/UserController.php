@@ -71,7 +71,7 @@ class UserController {
         try{
             $conn = connect();
             if($param['pass'] != "no"){
-                $stmt = $conn->prepare("UPDATE users SET email = :email, password = :password, contact = :contact, notification = :notification WHERE id = :id");
+                $stmt = $conn->prepare("UPDATE users SET email = :email, password = :password, contact = :contact, notification = :notification, cell = :cell, position = :position WHERE id = :id");
                 $stmt->execute(array('id'=>$id,
                                      'email'=>$param['email'],
                                      'password'=>$param['pass'],
@@ -89,9 +89,9 @@ class UserController {
                                      'cell'=>$param['cell'],
                                      'position'=>$param['position']));
             }
-            if($stmt->rowCount() != 1){
+            /*if($stmt->rowCount() != 1){
                     die("Update profile error");
-            }
+            }*/
             return 1;
         } catch (PDOException $e){
             echo 'ERROR: '. $e->getMessage();
