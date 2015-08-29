@@ -20,9 +20,9 @@
     <body>
         
         <?php $page = "sign"; ?>
-        <?php include(dirname(__FILE__).'/includes/header.php');?>
-        <?php include(dirname(__FILE__).'/Controller/SignController.php');?>
-        <?php include(dirname(__FILE__).'/Controller/UserController.php');?>
+        <?php include_once(dirname(__FILE__).'/includes/header.php');?>
+        <?php include_once(dirname(__FILE__).'/Controller/SignController.php');?>
+        <?php include_once(dirname(__FILE__).'/Controller/UserController.php');?>
         <div class="container">
         <?php
             if(isset($_SESSION['error'])){

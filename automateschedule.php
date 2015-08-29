@@ -1,50 +1,55 @@
 <?php
     session_start();
     if(!isset($_SESSION['user_id']) || !isset($_SESSION['user_name'])){
-		header("Location: login");
-		exit;
-	}	
-        
+        header("Location: login");
+        exit;
+    }	
 ?>
 <?php include_once(dirname(__FILE__).'/Controller/DutyController.php');?>
 <?php include_once(dirname(__FILE__).'/Controller/UserController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/ScheduleController.php');?>
 <?php
     $dutyController = DutyController::getInstance();
     $userController = UserController::getInstance();
+    $scheduleController = ScheduleController::getInstance();
     $userID = $_SESSION['user_id'];
     if ($userController->isAdmin($userID) == 0) {
         header("Location: index");
-        exit;
+		exit;
     }
-    if(isset($_SESSION['error'])){
-        echo '<div class="alert alert-danger">'.$_SESSION['error'].'</div>';
-        unset($_SESSION['error']);
-    }
-    if(isset($_SESSION['success'])){
-        echo '<div class="alert alert-success">'.$_SESSION['success'].'</div>';
-        unset($_SESSION['success']);
-    }
-    if (isset($_POST['assign_to'])) {
+    if(isset($_POST['assign_to'])) {
         for ($i = 1; $i <= 119; ++$i) {
             foreach (['yih','cl'] as $j) {
                 if ($_POST["assignto_".$j."_".$i] != 'unset') {
-                    $day = Date::stringToDay($_POST["date_".$j."_".$i]);
                     $newUser = new User($_POST["assignto_".$j."_".$i], null, null, null, null, null, null, null);
-                    $duty = new DailyDuty($i, $day->getDay(), null, null, $j, $day->getDate(), $day->getMonth(), $day->getYear());
-                    $dutyController->assignTemporaryDuty($newUser,$duty);
+                    $duty = new Duty($i, null, null, null, $j);
+                    $dutyController->assignPermanentDuty($newUser,$duty);
                 }
             }
         }
         header("Location: index");
         exit;
+    } else {
+    //if(isset($_POST['automate']) && $_POST['automate'] == 'yes') {
+        $automatedSchedule = $scheduleController->automateScheduling();
+        print_r($automatedSchedule);
     }
-    $day = Date::getToday();
-    $plus = 0;
-    if (isset($_GET["plus"])) {
-        $plus = $_GET["plus"];
+    if(isset($_POST['import']) && $_POST['import'] == 'yes') {
+        for ($i = 1; $i <= 119; ++$i) {
+            foreach (['yih','cl'] as $j) {
+                if ($_POST["assignto_".$j."_".$i] != 'unset') {
+                    $newUser = new User($_POST["assignto_".$j."_".$i], null, null, null, null, null, null, null);
+                    $duty = new Duty($i, null, null, null, $j);
+                    $dutyController->assignPermanentDuty($newUser,$duty);
+                }
+            }
+        }
+        header("Location: editschedule");
+        exit;
     }
-    $day = $day->addDay($plus);
-    $dutySchedule = $dutyController->getDutySchedule($day->getDate(),$day->getMonth(),$day->getYear());
+    $dayList = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    $day = "Monday";
+    $dutySchedule = $dutyController->getOriginalDutySchedule($day);
 ?>
 
 <html>
@@ -60,19 +65,37 @@
         <?php $page = "home"; ?>
         <?php include(dirname(__FILE__).'/includes/header.php');?>
         <div class="container">
+            <?php
+                if(isset($_SESSION['error'])){
+                    echo '<div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>'.$_SESSION['error'].'</div>';
+                    unset($_SESSION['error']);
+                }
+                if(isset($_SESSION['success'])){
+                    echo '<div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>'.$_SESSION['success'].'</div>';
+                    unset($_SESSION['success']);
+                }
+                if(isset($_SESSION['warning'])){
+                    echo '<div class="alert alert-warning alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>'.$_SESSION['warning'].'</div>';
+                    unset($_SESSION['warning']);
+                }
+            ?>
             <div class="row">
                 <div class="col-sm-7">
-                    <h1>Edit Temporary Schedule</h1>
+                    <h1>Edit Permanent Schedule</h1>
                 </div>
                 <div class="col-sm-5 well">
-                    <a class="btn btn-default" href="editschedule">Edit Permanent</a> 
+                    <a class="btn btn-default" href="edittempschedule">Edit Temporary</a> 
                     <button class="btn btn-default" onclick="clearAll()">Clear Selection</button>
-                    <a class="btn btn-default" href="?plus=<?php echo $plus-7; ?>">Previous Week</a>
-                    <a class="btn btn-default" href="?plus=<?php echo $plus+7; ?>">Next Week</a>
                 </div>
             </div>
         <div class="row">
-        <form action="edittempschedule" method="post">
+        <form action="editschedule" method="post">
             <p align="center">
             <label for="assign_to">Assign slot to:</label>
             <select id="assign_to" name="assign_to" onchange=change()>
@@ -88,93 +111,66 @@
                     }
                 ?>
             </select>
-            <input type='submit' class='btn btn-primary'/>
+            <input type='submit' class='btn btn-primary' value='Import to Permanent Duty Schedule'/>
             </p>
             <table border=1 class="table edittable">
                 <tr class='table_header'>
                     <td style="width: 6%">Date</td>
                     <td style="width: 4.8%">Venue</td>
                     <?php
-                    for ($i = 0; $i < count($dutySchedule); ++$i) {
+                    
+                    for ($i = 0; $i < count($dutySchedule); ++$i)
+                    {
                         echo "<th class=\"breakword timeslot\">".$dutySchedule[$i]["time"]."</th>";
                     }
                     ?>
                 </tr>
 
                 <?php
-                function printTable($location) {
-                    global $i;
-                    global $day;
+                function printTable($location, $dayIndex) {
                     global $userController;
-                    global $dutySchedule;
+                    global $automatedSchedule;
+                    global $day;
 
-                        for ($j = 0; $j < count($dutySchedule); ++$j)
-                        {   
-                            $supervisorID = $dutySchedule[$j]["supervisor_".$location];
-                            $name = "";
-                            if ($supervisorID < 0) {
-                                $name = $userController->getUserName($supervisorID * (-1));
-                            } else if ($supervisorID >= 0) {
-                                $name = $userController->getUserName($supervisorID);
-                            }
-                            $dutyID = $dutySchedule[$j]["id"];
-                            $onclickFunction = "\"cellClickHandler('" . $location . "', " . $dutyID . ", '" . $day->dayToString() ."')\"";
-                            $onmouseoverFunction = "\"cellMouseoverHandler('" . $location . "', " . $dutyID . ", '" . $day->dayToString() ."')\"";
-                            $id = "cell_" . $location . "_" . $dutyID . "_" . $day->dayToString();
+                        for ($j = $dayIndex * 17 + 1; $j <= ($dayIndex + 1) * 17; ++$j)
+                        //for ($j = 0; $j < count($dutySchedule); ++$j)
+                        {
+                            $dutyID = $j;
+                            $supervisorID = $automatedSchedule[$location][$j];
+                            $name = $userController->getUserName($supervisorID);
+                            $onclickFunction = "\"cellClickHandler('" . $location . "', " . $dutyID . ", '" . $day ."')\"";
+                            $onmouseoverFunction = "\"cellMouseoverHandler('" . $location . "', " . $dutyID . ", '" . $day ."')\"";
+                            $id = "cell_" . $location . "_" . $dutyID . "_" . $day;
                             $assignto = "assignto_" . $location . "_" . $dutyID;
-                            $date = "date_" . $location . "_" . $dutyID;
-                            $dateFormat = $day->dayToString();
-
-                            echo "<td class='duty_cell' ";
+                            echo "<td class='duty_cell ";
                             if ($name == "Drop") {
-                                echo "class='dropped_cell' ";
+                                echo "dropped_cell";
                             } else if ($name == "NO_DUTY") {
-                                echo "class='noduty_cell' ";
+                                echo "noduty_cell";
                             }
+                            echo "'";
                             echo "id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
                             echo "<p> $name </p>";
-                            echo "<input type='hidden' name='$assignto' id='$assignto' value='unset'/>";
-                            echo "<input type='hidden' name='$date' id='$date' value='$dateFormat'/>";
+                            echo "<input type='hidden' name='$assignto' id='$assignto' value='$supervisorID'/>";
                             echo "</td>";
-
-
-
-
-                            /*$id = "cell_" . $location . "_" . $dutyID  . "_" . $day->dayToString();
-                            if ($supervisorID < 0) {
-                                echo "<td class='dropped_cell' id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
-                            } else if ($name == "NO_DUTY") {
-                                echo "<td class='noduty_cell' id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
-                            } else {
-                                echo "<td id=" . $id . " onclick=" . $onclickFunction . " onmouseover=" . $onmouseoverFunction . ">";
-                            }
-                            echo $name;
-                            $dateFormat = $day->dayToString();
-                            echo "<input type='checkbox' name='".$location."_".$dutyID."' value='".$dateFormat."' style='display:none' />";
-                            echo "</td>";*/
                         }
                 }
 
-                while ($day->getDay() != "Monday") {
-                    $day = $day->minusDay(1);
-                }
 
                 for ($i = 0; $i < 7; ++$i)
                 {
                     echo "<tr class='blank_row'/>";
-                    $dutySchedule = $dutyController->getDutySchedule($day->getDate(),$day->getMonth(),$day->getYear());
+                    $day = $dayList[$i];
                     $cellClass = ($i % 2 == 0 ? "yellow_cell" : "white_cell");
                     echo "<tr class=$cellClass>\n";
-                        echo "<th rowspan=2 class=\"breakword\">".substr($day->getDay(),0,3)."<br>".$day->printToString()."</th>";
+                        echo "<th rowspan=2 class=\"breakword\">".$day."</th>";
                         echo "<th>YIH</th>";
-                        printTable("yih");
+                        printTable("yih", $i);
                     echo "</tr>\n";
                     echo "<tr class=$cellClass>\n";
                         echo "<th>CL</th>";
-                        printTable("cl");
+                        printTable("cl", $i);
                     echo "</tr>\n";
-
-                    $day = $day->addDay(1);
                 }
                 ?>
             </table>
@@ -182,8 +178,7 @@
         </div>
         </div>
         <?php include(dirname(__FILE__).'/includes/footer.php');?>
-
-	</body>
+  </body>
   <script>
     var currentSelection = null;
     var selections = {};

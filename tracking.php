@@ -6,8 +6,8 @@
     }	
         
 ?>
-<?php include(dirname(__FILE__).'/Controller/TrackingController.php');?>
-<?php include(dirname(__FILE__).'/Controller/UserController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/TrackingController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/UserController.php');?>
 <?php
     $HTML_NO = "&#10008";
     $HTML_YES = "&#10004";

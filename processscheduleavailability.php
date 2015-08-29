@@ -5,9 +5,9 @@
         exit;
     }   
 ?>
-<?php include(dirname(__FILE__).'/Controller/ScheduleController.php');?>
-<?php include(dirname(__FILE__).'/Controller/UserController.php');?>
-<?php include(dirname(__FILE__).'/Controller/DutyController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/ScheduleController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/UserController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/DutyController.php');?>
 <?php
     $scheduleController = ScheduleController::getInstance();
     $userController = UserController::getInstance();

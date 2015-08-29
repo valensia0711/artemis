@@ -5,11 +5,13 @@
         exit;
     }	
 ?>
-<?php include(dirname(__FILE__).'/Controller/DutyController.php');?>
-<?php include(dirname(__FILE__).'/Controller/UserController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/DutyController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/UserController.php');?>
+<?php include_once(dirname(__FILE__).'/Controller/ScheduleController.php');?>
 <?php
     $dutyController = DutyController::getInstance();
     $userController = UserController::getInstance();
+    $scheduleController = ScheduleController::getInstance();
     $userID = $_SESSION['user_id'];
     if ($userController->isAdmin($userID) == 0) {
         header("Location: index");
@@ -23,7 +25,7 @@
         echo '<div class="alert alert-success">'.$_SESSION['success'].'</div>';
         unset($_SESSION['success']);
     }
-    if (isset($_POST['assign_to'])) {
+    if(isset($_POST['assign_to'])) {
         for ($i = 1; $i <= 119; ++$i) {
             foreach (['yih','cl'] as $j) {
                 if ($_POST["assignto_".$j."_".$i] != 'unset') {
@@ -61,6 +63,10 @@
                 <div class="col-sm-5 well">
                     <a class="btn btn-default" href="edittempschedule">Edit Temporary</a> 
                     <button class="btn btn-default" onclick="clearAll()">Clear Selection</button>
+                    <form style="display:inline-block;" method="post" action="automateschedule">
+                        <input type="hidden" name="automate" value="yes"></input>
+                        <button class="btn btn-default" href="">Automate Scheduling</button>
+                    </form>
                 </div>
             </div>
         <div class="row">

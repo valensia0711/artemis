@@ -118,6 +118,35 @@ class UserController {
         }
     }
 
+    public function getAllActiveSubcoms() {
+        try{
+            $queryCondition = array('status' => 1,
+                                    'position' => 'Subcom',
+                                    'duty' => 1);
+            return $this->userList->get($queryCondition);
+        } catch (PDOException $e) {
+            echo 'ERROR: ' . $e->getMessage();
+        }
+    }
+
+    public function getAllActiveMembers() {
+        try{
+            $queryCondition = array('status' => 1,
+                                    'duty' => 1,);
+            return $this->userList->get($queryCondition);
+        } catch (PDOException $e) {
+            echo 'ERROR: ' . $e->getMessage();
+        }
+    }
+
+    public function getAllActiveMCs() {
+        try{
+            return $this->userList->getQuery('SELECT * FROM users WHERE status = "1" AND duty = "1" AND position != "Subcom"');
+        } catch (PDOException $e) {
+            echo 'ERROR: ' . $e->getMessage();
+        }
+    }
+
     public function getAllActiveUser() {
         try{
             $queryCondition = array('status' => 1);
