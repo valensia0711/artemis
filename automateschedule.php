@@ -32,7 +32,7 @@
     } else {
     //if(isset($_POST['automate']) && $_POST['automate'] == 'yes') {
         $automatedSchedule = $scheduleController->automateScheduling();
-        print_r($automatedSchedule);
+        //print_r($automatedSchedule);
     }
     if(isset($_POST['import']) && $_POST['import'] == 'yes') {
         for ($i = 1; $i <= 119; ++$i) {
