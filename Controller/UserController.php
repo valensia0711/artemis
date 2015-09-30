@@ -178,6 +178,12 @@ class UserController {
         $user = $this->userList->get($condition);
         return $user[0]["is_admin"];
     }
+
+    public function isMC($userID) {
+        $condition = array('id' => $userID);
+        $user = $this->userList->get($condition);
+        return $user[0]["position"] != "Subcom";   
+    }
     
     public function getTrackingStatus($userID) {
         $condition = array('id' => $userID);

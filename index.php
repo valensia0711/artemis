@@ -84,7 +84,15 @@
                 <td style="width: 6%">Date</td>
                 <td style="width: 4.8%">Venue</td>
                 <?php
-                echo "Your duty hours this week : ".$dutyController->countDutyHours($_SESSION['user_id'],$day)." hours";
+                echo "Your duty hours this week : ";
+                echo $dutyController->countDutyHours($_SESSION['user_id'],$day);
+                echo "/";
+                if ($userController->isMC($userID) == 1) {
+                    echo "∞";
+                } else {
+                    echo "14";
+                }
+                echo " hours";
                 for ($i = 0; $i < count($dutySchedule); ++$i)
                 {
                     echo "<th class=\"breakword timeslot\">".$dutySchedule[$i]["time"]."</th>";
