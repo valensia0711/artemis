@@ -225,7 +225,8 @@ class UserController {
     }
 
     public function getNotifyUsers(){
-        $condition = array('notification' => 1);
+        $condition = array('status' => 1,
+                           'notification' => 1);
         return $this->userList->get($condition);
     }
 
