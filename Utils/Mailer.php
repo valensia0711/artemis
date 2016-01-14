@@ -10,13 +10,21 @@ function sendMail($subject, $message, $targets){
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
 	$mail->Host = "smtp.gmail.com";
-	$mail->SMTPSecure = 'ssl';
-	$mail->Port = 465;
+	$mail->SMTPSecure = 'tls';
+	$mail->Port = 587;
 	$mail->SMTPAuth = true;
 	$mail->Username = "dutygrab@gmail.com";
 	$mail->Password = "teamnuschess";
 	$mail->FromName = $from_name;
 	$mail->From = $from;
+
+	$mail->SMTPOptions = array(
+	    'ssl' => array(
+	        'verify_peer' => false,
+	        'verify_peer_name' => false,
+	        'allow_self_signed' => true
+	    )
+	);
 
 	for($i = 0; $i < count($targets); $i++){
 		$mail->AddAddress($targets[$i]['email'], $targets[$i]['name']);
