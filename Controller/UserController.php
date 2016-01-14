@@ -172,6 +172,12 @@ class UserController {
         $user = $this->userList->get($condition);
         return $user[0]["name"];
     }
+
+    public function getCell($userID) {
+        $condition = array('id' => $userID);
+        $user = $this->userList->get($condition);
+        return $user[0]["cell"];
+    }
     
     public function isAdmin($userID) {
         $condition = array('id' => $userID);
@@ -238,6 +244,11 @@ class UserController {
 
     public function getEODTargets(){
         $condition = array('cell' => 'Center and Ops');
+         return $this->userList->get($condition);
+    }
+
+    public function getProblemReportTargets(){
+        $condition = array('cell' => 'technical');
          return $this->userList->get($condition);
     }
 }
