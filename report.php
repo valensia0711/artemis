@@ -75,7 +75,7 @@
                     <label class="control-label col-sm-2">
                     Description
                     </label>
-                    <textarea form='report_form' name='description' rows='10' cols='100'>Please try to describe the problem as descriptive as possible. If there is an error message, try to type the error message.</textarea>
+                    <textarea form='report_form' name='description' rows='10' cols='100' placeholder='Please try to describe the problem as descriptive as possible. If there is an error message, try to type the error message.'></textarea>
                 </div>
 
                 <div class="form-group">
