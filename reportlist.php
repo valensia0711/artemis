@@ -18,7 +18,7 @@
     $userController = UserController::getInstance();
     $HTML_NO = "&#10008";
     $HTML_YES = "&#10004"; 
-    $canEdit = $userController->getCell($_SESSION['user_id']) == "technical" ? 1 : 0;
+    $canEdit = $userController->getCell($_SESSION['user_id']) == "Technical" ? 1 : 0;
     if (isset($_GET['id'])) {
         if ($canEdit) {
             if (isset($_GET['change']) && $_GET['change'] == 'blocked') {

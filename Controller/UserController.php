@@ -248,7 +248,7 @@ class UserController {
     }
 
     public function getProblemReportTargets(){
-        $condition = array('cell' => 'technical');
+        $condition = array('cell' => 'Technical');
          return $this->userList->get($condition);
     }
 }
