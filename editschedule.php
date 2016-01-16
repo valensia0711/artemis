@@ -82,7 +82,7 @@
                     echo "<option value='unset'>Choose wisely</option>";
                     echo "<option value='0' >NO_DUTY</option>";
                     for ($i = 0; $i < count($allUsers); ++$i) {
-                        $dutyHours = $dutyController->countOriginalDutyHours(1);
+                        $dutyHours = $dutyController->countOriginalDutyHours($allUsers[$i]['id']);
                         echo "<option value='".$allUsers[$i]['id']."'>";
                         echo $allUsers[$i]['name'];
                         echo " : ".$dutyHours." hours";
