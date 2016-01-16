@@ -240,7 +240,8 @@
 
     function change() {
         var userID = $("#assign_to").val();
-        var username = $("#assign_to option:selected").text();
+        var usernameWithColon = $("#assign_to option:selected").text();
+        username = usernameWithColon.split(":")[0].trim();
         $("#assign_to").val('unset');
         $('.duty_cell').each(function() {
             var dutyDay = $(this).attr('id').split('_')[3];
