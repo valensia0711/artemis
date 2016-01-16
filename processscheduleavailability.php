@@ -150,6 +150,66 @@
                 ?>
             </table>
         <?php 
+            } else { ?>
+                <table border=1 class="table edittable">
+                <tr class='table_header'>
+                    <td style="width: 6%">Date</td>
+                    <?php
+                    
+                    for ($i = 0; $i < count($dutySchedule); ++$i)
+                    {
+                        echo "<th class=\"breakword timeslot\">".$dutySchedule[$i]["time"]."</th>";
+                    }
+                    ?>
+                </tr>
+
+                <?php
+                function printTable() {
+                    $blackIDs = [103, 104, 105, 115, 116, 117, 118, 119];
+                    global $userController;
+                    global $dutySchedule;
+                    global $day;
+                    global $scheduleController;
+
+                    for ($j = 0; $j < count($dutySchedule); ++$j)
+                    {
+                        $dutyID = $dutySchedule[$j]['id'];
+                        if (in_array($dutyID,$blackIDs)) {
+                            echo "<td class='black_cell'></td>";
+                        } else {
+
+                            //$user = new User($userID, null, null, null, null, null, null, null);
+                            $duty = new Duty($dutyID, null, null, null, null);
+                            $usersAvailable = $scheduleController->getAvailabilityDutyId($duty);
+
+                            echo "<td>";
+                            //echo "<td><select>";
+                            foreach($usersAvailable as $user) {
+                                $name = $userController->getUserName($user['supervisor_id']);
+                                echo $name."<br/>";
+                                //echo "<option>".$name."</option>";
+                            }
+                            //echo "</select></td>";
+                            echo "</td>";
+                        }
+                    }
+                }
+
+
+                for ($i = 0; $i < 7; ++$i)
+                {
+                    echo "<tr class='blank_row'/>";
+                    $day = $dayList[$i];
+                    $dutySchedule = $dutyController->getOriginalDutySchedule($day);
+                    $cellClass = ($i % 2 == 0 ? "yellow_cell" : "white_cell");
+                    echo "<tr class=$cellClass>\n";
+                    echo "<th class=\"breakword\">".$day."</th>";
+                    printTable();
+                    echo "</tr>\n";
+                }
+                ?>
+            </table>
+            <?php
             }
         ?>
         </div>

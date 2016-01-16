@@ -101,7 +101,7 @@
                     <th>Fixed?</th>
                     <th width="300%">Remarks</th>
                     <th>Last updated by</th>
-                    <th>Last updated at</th>
+                    <th>Last updated at (PST)</th>
                 </tr>
                 <?php
                 for ($i = 0; $i < count($problemList); ++$i) {

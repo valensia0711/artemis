@@ -51,6 +51,13 @@ class ScheduleController {
         return $availability;
     }
 
+    public function getAvailabilityDutyId($duty) {
+        $queryCondition = array('schedule_id' => $duty->getID(),
+                                'availability' => 'AVAILABLE');
+        $availability = $this->scheduleAvailability->get($queryCondition);
+        return $availability;   
+    }
+
     public function clearAllAvailability() {
         $queryCondition = array();
         $this->scheduleAvailability->deleteData($queryCondition);
