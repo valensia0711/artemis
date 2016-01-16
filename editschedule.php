@@ -82,7 +82,14 @@
                     echo "<option value='unset'>Choose wisely</option>";
                     echo "<option value='0' >NO_DUTY</option>";
                     for ($i = 0; $i < count($allUsers); ++$i) {
-                        echo "<option value='".$allUsers[$i]['id']."'>".$allUsers[$i]['name']."</option>";
+                        $dutyHours = $dutyController->countOriginalDutyHours(1);
+                        echo "<option value='".$allUsers[$i]['id']."'>";
+                        echo $allUsers[$i]['name'];
+                        echo " : ".$dutyHours." hours";
+                        if ($userController->isMC($allUsers[$i]['id'])) {
+                            echo "(MC)";
+                        }
+                        echo "</option>";
                     }
                 ?>
             </select>

@@ -15,6 +15,8 @@ class DutyController {
     private $grabList;
     private $dropList;
 
+    private $DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
     private function __construct() {
         $this->conn = connect();
         $this->dutySchedule = new DBOperation("duty_schedule");
@@ -389,6 +391,21 @@ class DutyController {
         $queryCondition = array('day' => $day);
         $dutySchedule = $this->dutySchedule->get($queryCondition);
         return $dutySchedule;
+    }
+
+    public function countOriginalDutyHours($userID) {
+        $hours = 0;
+        foreach ($this->DAY_NAMES as $dayName) {
+            $originalSchedule = $this->getOriginalDutySchedule($dayName);
+            foreach (['yih', 'cl'] as $venue) {
+                for ($j = 0; $j < count($originalSchedule); ++$j) {
+                    if ($originalSchedule[$j]["supervisor_".$venue] == $userID) {
+                        $hours += $this->getIntervalDuty($originalSchedule[$j]["id"]);
+                    }
+                }
+            }
+        }
+        return $hours;
     }
     
     public function getIntervalDuty($dutySessionID) {
