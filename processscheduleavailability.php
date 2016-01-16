@@ -186,7 +186,11 @@
                             //echo "<td><select>";
                             foreach($usersAvailable as $user) {
                                 $name = $userController->getUserName($user['supervisor_id']);
-                                echo $name."<br/>";
+                                if ($userController->isMC($user['supervisor_id'])) {
+                                    echo "<b>".$name."</b><br/>";
+                                } else {
+                                    echo $name."<br/>";
+                                }
                                 //echo "<option>".$name."</option>";
                             }
                             //echo "</select></td>";
