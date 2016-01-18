@@ -58,6 +58,13 @@ class ProblemController {
                                         'handler_id' => $userID));
     }
 
+    public function changeFixableStatus($userID, $reportID) {
+        $isFixable = $this->reportList->get(array('id' => $reportID))[0]["fixable"];
+        $this->reportList->updateData(array('id' => $reportID),
+                                  array('fixable' => 1 - $isFixable,
+                                        'handler_id' => $userID));
+    }
+
     public function changeRemarks($userID, $remark, $reportID) {
         $this->reportList->updateData(array('id' => $reportID),
                                   array('remarks' => $remark,
@@ -69,7 +76,8 @@ class ProblemController {
     }
 
     public function getUnfixedReportList() {
-        return $this->reportList->get(array('fixed' => 0));
+        return $this->reportList->get(array('fixed' => 0,
+                                            'fixable' => 1));
     }
 
     public function getUnfixedCriticalReportList() {

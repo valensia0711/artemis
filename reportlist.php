@@ -27,6 +27,9 @@
             if (isset($_GET['change']) && $_GET['change'] == 'fixed') {
                 $problemController->changeFixStatus($_SESSION['user_id'], $_GET['id']);
             }
+            if (isset($_GET['change']) && $_GET['change'] == 'fixable') {
+                $problemController->changeFixableStatus($_SESSION['user_id'], $_GET['id']);
+            }
             if (isset($_GET['change']) && $_GET['change'] == 'critical') {
                 $problemController->changeCriticalStatus($_SESSION['user_id'], $_GET['id']);
             }
@@ -77,14 +80,14 @@
                     } else if (isset($_GET['filter']) && $_GET['filter'] == 'critical') {
                         echo "(Critical)";
                     } else {
-                        echo "(Unfixed)";
+                        echo "(Unfixed and Fixable)";
                     }
                 ?> </h1>
             </div>
         </div>
         <div class="row row-centered text-centered">
         <div class="col-sm-1"></div>
-        <a class='btn btn-default' href='reportlist'>Show Unfixed Problem Only</a>
+        <a class='btn btn-default' href='reportlist'>Show Unfixed and Fixable Problem Only</a>
         <a class='btn btn-default' href='reportlist?filter=critical'>Show Critical Unfixed Problem Only</a>
         <a class='btn btn-default' href='reportlist?filter=all'>Show All Problems</a>
         <a class='btn btn-default' href='report'>Submit a new report</a>
@@ -99,6 +102,7 @@
                     <th>Critical?</th>
                     <th>Blocked? (CL Only)</th>
                     <th>Fixed?</th>
+                    <th>Fixable?</th>
                     <th width="300%">Remarks</th>
                     <th>Last updated by</th>
                     <th>Last updated at (PST)</th>
@@ -114,6 +118,7 @@
                     $isCritical = $problemList[$i]['critical'] ? $HTML_YES : $HTML_NO;
                     $isBlocked = $problemList[$i]['blocked'] ? $HTML_YES : $HTML_NO;
                     $isFixed = $problemList[$i]['fixed'] ? $HTML_YES : $HTML_NO;
+                    $isFixable = $problemList[$i]['fixable'] ? $HTML_YES : $HTML_NO;
 
                     if ($canEdit) {
                         $params = array_merge($_GET, array("id" => $problemList[$i]['id'], "change" => "critical"));
@@ -137,6 +142,14 @@
                         echo "<td><a href='reportlist?$new_query_string'>$isFixed</a></td>";
                     } else {
                         echo "<td>".$isFixed."</td>";
+                    }
+
+                    if ($canEdit) {
+                        $params = array_merge($_GET, array("id" => $problemList[$i]['id'], "change" => "fixable"));
+                        $new_query_string = http_build_query($params);
+                        echo "<td><a href='reportlist?$new_query_string'>$isFixable</a></td>";
+                    } else {
+                        echo "<td>".$isFixable."</td>";
                     }
 
                     if ($canEdit) {

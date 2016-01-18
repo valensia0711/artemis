@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 14, 2016 at 01:56 PM
+-- Generation Time: Jan 18, 2016 at 06:48 AM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -414,16 +414,17 @@ CREATE TABLE IF NOT EXISTS `problems` (
   `remarks` varchar(1000) NOT NULL,
   `fixed` int(11) NOT NULL DEFAULT '0',
   `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `critical` int(11) NOT NULL DEFAULT '1'
+  `critical` int(11) NOT NULL DEFAULT '1',
+  `fixable` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `problems`
 --
 
-INSERT INTO `problems` (`id`, `reporter_id`, `venue`, `description`, `pc_number`, `handler_id`, `blocked`, `remarks`, `fixed`, `last_updated`, `critical`) VALUES
-(56, 1, 'yih', 'test', 'test', NULL, 0, '', 0, '2016-01-14 12:44:15', 0),
-(57, 1, 'yih', 'dasdsad', 'dads', NULL, 0, '', 0, '2016-01-14 12:46:05', 1);
+INSERT INTO `problems` (`id`, `reporter_id`, `venue`, `description`, `pc_number`, `handler_id`, `blocked`, `remarks`, `fixed`, `last_updated`, `critical`, `fixable`) VALUES
+(56, 1, 'yih', 'test', 'test', NULL, 0, '', 0, '2016-01-14 12:44:15', 0, 1),
+(57, 1, 'yih', 'dasdsad', 'dads', 3, 0, '', 0, '2016-01-18 05:47:32', 1, 1);
 
 -- --------------------------------------------------------
 
