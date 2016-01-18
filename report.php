@@ -82,10 +82,12 @@
                     <label for="venue" class="control-label col-sm-2">
                     Critical
                     </label>
-                    <div class="btn-group col-sm-4" data-toggle="buttons">
+                    <div class="btn-group col-sm-2" data-toggle="buttons">
                         <label class="btn btn-default"><input type="radio" name="critical" value="1" required />&#10004</label>
                         <label class="btn btn-default"><input type="radio" name="critical" value="0" />&#10008</label>
                     </div>
+                    If the computer is completely broken and cannot be used (e.g. cannot login, cannot boot to Windows, etc.), choose the tick mark.
+                    Otherwise, if the computer still can be used (e.g. noisy CPU, very slow, etc.), choose the cross mark.
                 </div>
                 
                 <div class="form-group">
