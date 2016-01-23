@@ -84,7 +84,14 @@
                     echo "<option value='unset'>Choose wisely</option>";
                     echo "<option value='0' >NO_DUTY</option>";
                     for ($i = 0; $i < count($allUsers); ++$i) {
-                        echo "<option value='".$allUsers[$i]['id']."'>".$allUsers[$i]['name']."</option>";
+                        $dutyHours = $dutyController->countDutyHours($allUsers[$i]['id'],$day);
+                        echo "<option value='".$allUsers[$i]['id']."'>";
+                        echo $allUsers[$i]['name'];
+                        echo " : ".$dutyHours." hours";
+                        if ($userController->isMC($allUsers[$i]['id'])) {
+                            echo "(MC)";
+                        }
+                        echo "</option>";
                     }
                 ?>
             </select>
@@ -265,7 +272,8 @@
 
     function change() {
         var userID = $("#assign_to").val();
-        var username = $("#assign_to option:selected").text();
+        var usernameWithColon = $("#assign_to option:selected").text();
+        username = usernameWithColon.split(":")[0].trim();
         $("#assign_to").val('unset');
         $('.duty_cell').each(function() {
             var dutyDay = $(this).attr('id').split('_')[3];
