@@ -38,9 +38,6 @@
         exit;
     }
     if (isset($_POST['id'])) {
-        echo "DSAJKDK";
-        echo $_POST['remarks'];
-        echo $_POST['id'];
         if ($canEdit) {
             $problemController->changeRemarks($_SESSION['user_id'], $_POST['remarks'], $_POST['id']);
         }
