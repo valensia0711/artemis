@@ -38,6 +38,9 @@
         exit;
     }
     if (isset($_POST['id'])) {
+        echo "DSAJKDK";
+        echo $_POST['remarks'];
+        echo $_POST['id'];
         if ($canEdit) {
             $problemController->changeRemarks($_SESSION['user_id'], $_POST['remarks'], $_POST['id']);
         }
@@ -155,11 +158,11 @@
                     if ($canEdit) {
                         echo "<td>";
                         echo $problemList[$i]['remarks'];
-                        echo "<textarea form='remarks_form' name='remarks'>";
-                        echo "</textarea>";
                         echo "<form method='POST' id='remarks_form'>";
                         echo "<input type='hidden' name='change' value='remarks'>";
                         echo "<input type='hidden' name='id' value='".$problemList[$i]['id']."'>";
+                        echo "<textarea name='remarks'>";
+                        echo "</textarea>";
                         echo "<input type='submit' value='Change Remark'>";
                         echo "</form>";
                         echo "</td>";
