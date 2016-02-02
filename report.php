@@ -40,6 +40,7 @@
             <a class='btn btn-default' href='reportlist'>Computer Problem Report List</a>
             <h4>
                 IMPORTANT : READ THIS FIRST BEFORE REPORTING<br/>
+                Look at "Computer Problem Report List" first and check whether the problem has been reported before<br/>
                 If the problem is a connection problem (e.g. can't login, can't access internet), please try to unplug and plug
                 back the Ethernet (LAN) cable on the computer. <br/>
                 If that still doesn't fix the problem, try to restart the computer. <br/>
