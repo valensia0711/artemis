@@ -14,13 +14,13 @@
                 <li class="<?php echo ($page == "home" ? "active": "")?>"><a href="index">Home</a></li>
                 <li class="<?php echo ($page == "grab" ? "active": "")?>"><a href="grablist">Grab Duty</a></li>
                 <li class="<?php echo ($page == "announcement" ? "active": "")?>"><a href="announcement">Announcement</a></li>
-                <li class="<?php echo ($page == "report" ? "active": "")?>"><a href="report">Problem Report</a></li>
-                <li class="<?php echo ($page == "sign" ? "active": "")?>"><a href="sign">Sign In/Out</a></li>   
-                <li class="<?php echo ($page == "members" ? "active": "")?>"><a href="members">Members</a></li>   
-                <li class="<?php echo ($page == "guide" ? "active": "")?>"><a href="guide">Guide</a></li>   
+                <li class="<?php echo ($page == "report" ? "active": "")?>"><a href="reportlist">Problem Report</a></li>
+                <li class="<?php echo ($page == "sign" ? "active": "")?>"><a href="sign">Sign In/Out</a></li>
+                <li class="<?php echo ($page == "members" ? "active": "")?>"><a href="members">Members</a></li>
+                <li class="<?php echo ($page == "guide" ? "active": "")?>"><a href="guide">Guide</a></li>
                 <li class="<?php echo ($page == "postEOD" ? "active": "")?>"><a href="postEOD">EOD</a></li>
-                
-                
+
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
 			<li class="dropdown <?php echo (($page == "tracking" || $page == "scheduleavailability" || $page == "user") ? "active": "")?>">
