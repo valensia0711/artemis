@@ -36,13 +36,13 @@ require_once(dirname(__FILE__).'/DBhandler.php');
 			$query = "INSERT INTO ".$this->tableName." (".$keys.") VALUES (".$values.")";
 			return self::$dbHandler->doQuery($query);
 		}
-                
+
                 private function commandiseCondition($condition)
                 {
                     $conditionCommand = "";
                     foreach ($condition as $key => $value)
                     {
-                        if ($conditionCommand != "")
+                        if ($conditionCommand != "" && substr($key, 0, 4) != " OR ")
                         {
                             $conditionCommand = $conditionCommand." AND ";
                         }

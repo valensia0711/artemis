@@ -7,11 +7,11 @@ require_once(dirname(__FILE__).'/../Utils/DBoperation.php');
 class UserController {
     private static $instance;
     private $userList;
-    
+
     private function __construct() {
         $this->userList = new DBOperation("users");
     }
-   
+
     public static function getInstance() {
         if (!self::$instance) {
             self::$instance = new self();
@@ -27,7 +27,7 @@ class UserController {
     	$email = $user->getEmail();
     	$position = $user->getPosition();
     	$cell = $user->getCell();
-    	
+
         try{
             $conn = connect();
             if(!self::isUserExist($user, $conn)){
@@ -52,7 +52,7 @@ class UserController {
             echo 'ERROR: ' . $e->getMessage();
         }
     }
-    
+
     public function removeUser($userID) {
         try{
             $conn = connect();
@@ -155,7 +155,7 @@ class UserController {
             echo 'ERROR: ' . $e->getMessage();
         }
     }
-    
+
     //check if there is such user in the database (based on matricnumber)
     private function isUserExist($user, $conn){
         $stmt = $conn->prepare('SELECT count(*) FROM users WHERE matric_number = :matricNumber');
@@ -163,7 +163,7 @@ class UserController {
 
         return $stmt->fetchColumn();
     }
-    
+
     public function getUserName($userID) {
         if ($userID == -1) return "Drop";
         if ($userID == 0) return "NO_DUTY";
@@ -178,7 +178,7 @@ class UserController {
         $user = $this->userList->get($condition);
         return $user[0]["cell"];
     }
-    
+
     public function isAdmin($userID) {
         $condition = array('id' => $userID);
         $user = $this->userList->get($condition);
@@ -188,9 +188,9 @@ class UserController {
     public function isMC($userID) {
         $condition = array('id' => $userID);
         $user = $this->userList->get($condition);
-        return $user[0]["position"] != "Subcom";   
+        return $user[0]["position"] != "Subcom";
     }
-    
+
     public function getTrackingStatus($userID) {
         $condition = array('id' => $userID);
         $user = $this->userList->get($condition);
@@ -202,10 +202,10 @@ class UserController {
         $user = $this->userList->get($condition);
         return $user[0]["duty"];
     }
-    
+
     public function getUserInfo($id){
         try{
-            $conn = connect(); 
+            $conn = connect();
             $stmt = $conn->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
             $stmt->execute(array('id'=>$id));
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -248,7 +248,8 @@ class UserController {
     }
 
     public function getProblemReportTargets(){
-        $condition = array('cell' => 'Technical');
+        $williamId = 43;
+        $condition = array('cell' => 'Technical', ' OR id' => $williamId);
          return $this->userList->get($condition);
     }
 }
