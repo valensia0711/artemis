@@ -23,47 +23,47 @@ class DutyController {
         $this->grabList = new DBOperation("grabbed_duty");
         $this->dropList = new DBoperation("released_duty");
     }
-   
+
     public static function getInstance() {
     	if (!self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-    
+
     public function assignPermanentDuty($user, $duty) {
         try{
-            $stmt = $this->conn->prepare("UPDATE duty_schedule SET supervisor_{$duty->getLocation()} = :supervisor_id 
+            $stmt = $this->conn->prepare("UPDATE duty_schedule SET supervisor_{$duty->getLocation()} = :supervisor_id
                 WHERE id= :id");
 
             $stmt->execute(array('supervisor_id' => $user->getID(),
                                 'id' => $duty->getID()));
-            
+
             if($stmt->rowCount() != 1){
                 die("Duty update error!");
             }
-            
+
             $stmt = $this->conn->prepare("DELETE FROM released_duty WHERE schedule_id = :schedule_id
                 AND venue = :venue");
 
             $stmt->execute(array('schedule_id' => $duty->getID(),
                                 'venue' => $duty->getLocation()));
-            
-            
+
+
             $stmt = $this->conn->prepare("DELETE FROM grabbed_duty WHERE schedule_id = :schedule_id
                 AND venue = :venue");
 
             $stmt->execute(array('schedule_id' => $duty->getID(),
                                 'venue' => $duty->getLocation()));
-            
-            
+
+
             $_SESSION['success'] = 'Successfully assign permanent duty(ies)';
             return true;
         } catch(PDOException $e) {
             echo 'ERROR: ' . $e->getMessage();
         }
     }
-    
+
     public function assignTemporaryDuty($user, $duty) {
         try {
             $oldUser = new User($this->getSupervisorID($duty), null, null, null, null, null, null, null);
@@ -83,7 +83,7 @@ class DutyController {
             exit;
         }
     }
-    
+
     private function isOpeningDuty($duty) {
         for ($openingID = 1; $openingID <= 103; $openingID += 17) {
             if ($duty->getID() == $openingID) {
@@ -96,7 +96,7 @@ class DutyController {
         }
         return false;
     }
-    
+
     private function isClosingDuty($duty) {
         for ($closingID = 17; $closingID <= 119; $closingID += 17) {
             if ($duty->getID() == $closingID) {
@@ -109,7 +109,7 @@ class DutyController {
         }
         return false;
     }
-    
+
     private function isMoreThanKHours($user, $duty, $hoursLimit) {
         $startDuty = new DailyDuty($duty->getID() - 1, null, null, null, $duty->getLocation(), $duty->getDate(), $duty->getMonth(), $duty->getYear());
         $endDuty = new DailyDuty($duty->getID() + 1, null, null, null, $duty->getLocation(), $duty->getDate(), $duty->getMonth(), $duty->getYear());
@@ -123,37 +123,37 @@ class DutyController {
         }
         $startDuty->setID($startDuty->getID() + 1);
         $endDuty->setID($endDuty->getID() - 1);
-        
+
         $startTime = substr($this->getTimeDuty($startDuty->getID()),0,5);
         $endTime = substr($this->getTimeDuty($endDuty->getID()),6,5);
         $interval = intval(substr($endTime,0,2)) * 100 + intval(substr($endTime,3,2)) -
                     intval(substr($startTime,0,2)) * 100 - intval(substr($startTime,3,2));
         return ($interval > $hoursLimit);
     }
-    
+
     private function isConsecutiveDiffPlace($user, $duty) {
-        $anotherDuty = new DailyDuty($duty->getID() - 1, null, null, null, 
-                                     $duty->getLocation() == "yih" ? "cl" : "yih", 
+        $anotherDuty = new DailyDuty($duty->getID() - 1, null, null, null,
+                                     $duty->getLocation() == "yih" ? "cl" : "yih",
                                      $duty->getDate(), $duty->getMonth(), $duty->getYear());
         if ($anotherDuty->getID() >= 1 && $this->getDayNameDuty($anotherDuty->getID()) == $this->getDayNameDuty($duty->getID())
             && $this->getSupervisorID($anotherDuty) == $user->getID()) {
             return true;
         }
-        $anotherDuty = new DailyDuty($duty->getID() + 1, null, null, null, 
-                                     $duty->getLocation() == "yih" ? "cl" : "yih", 
+        $anotherDuty = new DailyDuty($duty->getID() + 1, null, null, null,
+                                     $duty->getLocation() == "yih" ? "cl" : "yih",
                                      $duty->getDate(), $duty->getMonth(), $duty->getYear());
         if ($anotherDuty->getID() <= 119 && $this->getDayNameDuty($anotherDuty->getID()) == $this->getDayNameDuty($duty->getID())
             && $this->getSupervisorID($anotherDuty) == $user->getID()) {
             return true;
         }
     }
-    
+
     public function countDutyHours($userID, $day) {
         $day = new Date($day->getDate(), $day->getMonth(), $day->getYear());
         while ($day->getDay() != "Monday") {
             $day = $day->minusDay(1);
         }
-        
+
         $hours = 0;
         for ($i = 0; $i < 7; ++$i) {
             for ($j = $i * 17 + 1; $j <= ($i + 1) * 17; ++$j) {
@@ -168,9 +168,9 @@ class DutyController {
         }
         return $hours;
     }
-    
+
     public function grabDuty($user, $duty, $grabRestriction = true) {
-        
+
         //if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'YIH' && $duty->getTime() == '08.30-09.00'){
         //    return false;
         //}
@@ -180,34 +180,34 @@ class DutyController {
                 if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'yih' && $this->isOpeningDuty($duty)){
                     throw new Exception('You have the key to open the centre meh? Only MC can grab opening YIH duty.');
                 }
-                
+
                 if($user->getPosition() == 'Subcom' && $duty->getLocation() == 'yih' && $this->isClosingDuty($duty)){
                     throw new Exception('You have the key to close the centre meh? Only MC can grab closing YIH duty.');
                 }
-                
-                if($user->getPosition() == 'Subcom' && $this->isMoreThanKHours($user, $duty, 400)) {
-                    throw new Exception('Subcom is not allowed to have more than 4 hours consecutive duty.');
+
+                if($user->getPosition() == 'Subcom' && $this->isMoreThanKHours($user, $duty, 600)) {
+                    throw new Exception('Subcom is not allowed to have more than 6 hours consecutive duty.');
                 }
-                
+
                 if($user->getPosition() == 'Subcom' && $this->isConsecutiveDiffPlace($user, $duty)) {
                     throw new Exception('Subcom is not allowed to have consecutive duty in different place.');
                 }
-                
-                if($user->getPosition() == 'Subcom' && 
+
+                if($user->getPosition() == 'Subcom' &&
                    $this->countDutyHours($user->getID(), $duty) + $this->getIntervalDuty($duty->getID()) > 14) {
                     throw new Exception('Subcom is not allowed to have more than 14 duty hours in a week.');
                 }
             }
-                
+
             $params = array('schedule_id' => $duty->getID(),
                             'date' => $duty->getDate(),
                             'month' => $duty->getMonth(),
                             'year' => $duty->getYear(),
                             'location' => $duty->getLocation());
-            
+
             $otherLocation = ($duty->getLocation() == "yih" ? "cl" : "yih");
             $dutyOtherLocation = new DailyDuty($duty->getID(), null, null, null, $otherLocation, $duty->getDate(), $duty->getMonth(), $duty->getYear());
-                
+
             if ($grabRestriction) {
                 if ($user->getID() > 0 && $this->getSupervisorID($dutyOtherLocation) == $user->getID()) {
                     throw new Exception('The user have a duty in the same time in the other venues.');
@@ -215,17 +215,17 @@ class DutyController {
             }
 
             $this->conn = connect();
-            $released = $this->conn->prepare("SELECT count(*) FROM released_duty 
-                WHERE schedule_id = :schedule_id AND date = :date AND month = :month 
+            $released = $this->conn->prepare("SELECT count(*) FROM released_duty
+                WHERE schedule_id = :schedule_id AND date = :date AND month = :month
                 AND year = :year AND venue = :location");
             $released->execute($params);
 
             //throw new Exception($released->fetchColumn());
-            
+
             if($released->fetchColumn() == 1) {
                 //Remove from released_duty first to prevent multiple insert.
                 $delete_released = $this->conn->prepare("DELETE FROM released_duty
-                    WHERE schedule_id = :schedule_id AND date = :date AND month = :month 
+                    WHERE schedule_id = :schedule_id AND date = :date AND month = :month
                     AND year = :year AND venue = :location");
                 $delete_released->execute($params);
                 if($delete_released->rowCount() != 1){
@@ -233,7 +233,7 @@ class DutyController {
                 }
 
                 //Insert into grabbed_duty
-                $grab = $this->conn->prepare("INSERT INTO grabbed_duty (supervisor_id, schedule_id, date, month, year, venue) 
+                $grab = $this->conn->prepare("INSERT INTO grabbed_duty (supervisor_id, schedule_id, date, month, year, venue)
                     VALUES (:supervisor_id, :schedule_id, :date, :month, :year, :location)");
                 $params['supervisor_id'] = $user->getID();
                 $grab->execute($params);
@@ -250,7 +250,7 @@ class DutyController {
             exit;
         }
     }
-    
+
     public function releaseDuty($user, $duty) {
         try{
             $this->conn = connect();
@@ -261,19 +261,19 @@ class DutyController {
                             'month' => $duty->getMonth(),
                             'year' => $duty->getYear(),
                             'location' => $duty->getLocation());
-            $userGrabbed = $this->conn->prepare("SELECT count(*) FROM grabbed_duty 
-                WHERE supervisor_id = :supervisor_id AND schedule_id = :schedule_id AND date = :date 
+            $userGrabbed = $this->conn->prepare("SELECT count(*) FROM grabbed_duty
+                WHERE supervisor_id = :supervisor_id AND schedule_id = :schedule_id AND date = :date
                 AND month = :month AND year = :year AND venue = :location");
             $userGrabbed->execute($params);
             if($userGrabbed->fetchColumn() == 1){
                 //remove from grabbed_duty
                 $removeGrabbed = $this->conn->prepare("DELETE FROM grabbed_duty
-                    WHERE supervisor_id = :supervisor_id AND schedule_id = :schedule_id AND date = :date 
+                    WHERE supervisor_id = :supervisor_id AND schedule_id = :schedule_id AND date = :date
                     AND month = :month AND year = :year AND venue = :location");
                 $removeGrabbed->execute($params);
-                
+
                 //insert into released_duty
-                $release = $this->conn->prepare("INSERT INTO released_duty (supervisor_id, schedule_id, date, month, year, venue) 
+                $release = $this->conn->prepare("INSERT INTO released_duty (supervisor_id, schedule_id, date, month, year, venue)
                     VALUES (:supervisor_id, :schedule_id, :date, :month, :year, :location)");
                 $release->execute($params);
                 if($release->rowCount() != 1){
@@ -292,10 +292,10 @@ class DutyController {
             $regular = $this->conn->prepare("SELECT count(*) FROM duty_schedule
                 WHERE supervisor_{$duty->getLocation()} = :supervisor_id AND day = :day AND id = :id");
             $regular->execute($regularParams);
-            
+
             if($regular->fetchColumn() == 1){
                 //insert into released_duty
-                $release = $this->conn->prepare("INSERT INTO released_duty (supervisor_id, schedule_id, date, month, year, venue) 
+                $release = $this->conn->prepare("INSERT INTO released_duty (supervisor_id, schedule_id, date, month, year, venue)
                     VALUES (:supervisor_id, :schedule_id, :date, :month, :year, :location)");
                 $release->execute($params);
                 if($release->rowCount() != 1){
@@ -314,14 +314,14 @@ class DutyController {
             //echo 'ERROR: ' . $e->getMessage();
         }
     }
-    
+
     public function releaseDuties($user, $date, $duties) {
         foreach ($duties as $duty) {
             self::releaseDuty($user, $date, $duty);
         }
         return true;
     }
-    
+
     /*public function getSupervisorID($duty) {
         $queryCondition = array('id' => $duty->getID());
         $dutySchedule = $this->dutySchedule->get($queryCondition)[0];
@@ -330,19 +330,19 @@ class DutyController {
                                 'year' => $duty->getYear(),
                                 'schedule_id' => $duty->getID(),
                                 'venue' => $duty->getLocation());
-        $dropList = $this->dropList->get($queryCondition);  
+        $dropList = $this->dropList->get($queryCondition);
         $grabList = $this->grabList->get($queryCondition);
         if (count($dropList) > 0 || count($grabList) > 0) {
             if (count($dropList) == count($grabList)) {
                 return $grabList[count($grabList)-1]["supervisor_id"];
             } else if (count($dropList) - count($grabList) == 1) {
                 return -1;
-            }   
+            }
         } else {
             return $dutySchedule["supervisor_".$duty->getLocation()];
         }
     }*/
-    
+
     public function getSupervisorID($duty) {
         $queryCondition = array('id' => $duty->getID());
         $dutySchedule = $this->dutySchedule->get($queryCondition)[0];
@@ -351,7 +351,7 @@ class DutyController {
                                 'year' => $duty->getYear(),
                                 'schedule_id' => $duty->getID(),
                                 'venue' => $duty->getLocation());
-        $dropList = $this->dropList->get($queryCondition);  
+        $dropList = $this->dropList->get($queryCondition);
         $grabList = $this->grabList->get($queryCondition);
         if (count($dropList) == 0 && count($grabList) == 0) {
             return $dutySchedule["supervisor_".$duty->getLocation()];
@@ -366,15 +366,15 @@ class DutyController {
     {
         $tempDate = new Date($date, $month, $year);
         $dayName = $tempDate->getDay();
-        
+
         $queryCondition = array(); $queryCondition["day"] = $dayName;
         $dutySchedule = $this->dutySchedule->get($queryCondition);
-        
-        $queryCondition = array(); 
+
+        $queryCondition = array();
         $queryCondition["date"] = $date;
-        $queryCondition["month"] = $month; 
+        $queryCondition["month"] = $month;
         $queryCondition["year"] = $year;
-        
+
         for ($i = 0; $i < count($dutySchedule); ++$i) {
             $queryCondition["schedule_id"] = $dutySchedule[$i]["id"];
             foreach (["yih","cl"] as $venue) {
@@ -385,7 +385,7 @@ class DutyController {
 
         return $dutySchedule;
     }
-    
+
     public function getOriginalDutySchedule($day)
     {
         $queryCondition = array('day' => $day);
@@ -407,7 +407,7 @@ class DutyController {
         }
         return $hours;
     }
-    
+
     public function getIntervalDuty($dutySessionID) {
         $timeDuty = $this->getTimeDuty($dutySessionID);
         $startTime = intval(substr($timeDuty,0,2)) * 100 + intval(substr($timeDuty,3,2));
@@ -418,17 +418,17 @@ class DutyController {
             return floor(($endTime - $startTime) / 100) + 0.5;
         }
     }
-    
+
     public function getTimeDuty($dutySessionID) {
         $queryCondition = array('id' => $dutySessionID);
         return $this->dutySchedule->get($queryCondition)[0]['time'];
     }
-    
+
     public function getDayNameDuty($dutySessionID) {
         $queryCondition = array('id' => $dutySessionID);
         return $this->dutySchedule->get($queryCondition)[0]['day'];
     }
-    
+
     public function getAvailableDuties($date, $month, $year, $venue) {
         if ($date == null) {
             return $this->dropList->getQuery("SELECT DISTINCT date,month,year,venue FROM released_duty ORDER BY year ASC, month ASC, date ASC");
@@ -440,11 +440,11 @@ class DutyController {
             return $this->dropList->get($queryCondition,"schedule_id ASC");
         }
     }
-    
+
  //    public function swapDuty($firstUser, $secondUser, $firstDuty, $secondDuty) {
  //    	return true;
  //    }
-    
+
  //    public function getHoursPerMonth($user, $date) {
  //    	$month = $date->getMonth();
  //    	$user = $user->getMatric();
