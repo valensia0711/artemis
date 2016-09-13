@@ -194,8 +194,8 @@ class DutyController {
                 }
 
                 if($user->getPosition() == 'Subcom' &&
-                   $this->countDutyHours($user->getID(), $duty) + $this->getIntervalDuty($duty->getID()) > 14) {
-                    throw new Exception('Subcom is not allowed to have more than 14 duty hours in a week.');
+                   $this->countDutyHours($user->getID(), $duty) + $this->getIntervalDuty($duty->getID()) > 16) {
+                    throw new Exception('Subcom is not allowed to have more than 16 duty hours in a week.');
                 }
             }
 

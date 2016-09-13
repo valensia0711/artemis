@@ -90,7 +90,7 @@
                 if ($userController->isMC($userID) == 1) {
                     echo "∞";
                 } else {
-                    echo "14";
+                    echo "16";
                 }
                 echo " hours";
                 for ($i = 0; $i < count($dutySchedule); ++$i)
