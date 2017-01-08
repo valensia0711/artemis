@@ -85,7 +85,7 @@
                 <label class = "col-sm-2 control-label">Venue: </label>
                 <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default"><input type="radio" name="venue" value="YIH" required />YIH</label>
-                    <label class="btn btn-default"><input type="radio" name="venue" value="CL" />CL</label>
+                    <label class="btn btn-default"><input type="radio" name="venue" value="CL" />AS8</label>
                 </div>
                 <div class="btn-group">
                     <div class="col-sm-offset-2 col-sm-10">

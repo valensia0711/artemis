@@ -61,7 +61,7 @@
                     </label>
                     <div class="btn-group col-sm-4" data-toggle="buttons">
                         <label class="btn btn-default"><input type="radio" name="venue" value="yih" required />YIH</label>
-                        <label class="btn btn-default"><input type="radio" name="venue" value="cl" />CL</label>
+                        <label class="btn btn-default"><input type="radio" name="venue" value="cl" />AS8</label>
                     </div>
                 </div>
 

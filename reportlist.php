@@ -100,7 +100,7 @@
                     <th>PC Number</th>
                     <th width="200%">Description</th>
                     <th>Critical?</th>
-                    <th>Blocked? (CL Only)</th>
+                    <th>Blocked? (AS8 Only)</th>
                     <th>Fixed?</th>
                     <th>Fixable?</th>
                     <th width="300%">Remarks</th>

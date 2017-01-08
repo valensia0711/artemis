@@ -148,7 +148,7 @@
                         printTable("yih");
                     echo "</tr>\n";
                     echo "<tr class=$cellClass>\n";
-                        echo "<th>CL</th>";
+                        echo "<th>AS8</th>";
                         printTable("cl");
                     echo "</tr>\n";
                 }
