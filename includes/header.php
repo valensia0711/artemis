@@ -15,7 +15,7 @@
                 <li class="<?php echo ($page == "grab" ? "active": "")?>"><a href="grablist">Grab Duty</a></li>
                 <li class="<?php echo ($page == "announcement" ? "active": "")?>"><a href="announcement">Announcement</a></li>
                 <li class="<?php echo ($page == "report" ? "active": "")?>"><a href="reportlist">Problem Report</a></li>
-				<li><a target="_blank" href="https://drive.google.com/open?id=0B5GXlJznMxIGWnotemxSa0laZ0k">Timesheet</a></li>
+				<li><a target="_blank" href="https://drive.google.com/drive/folders/0B5GXlJznMxIGck9YZmtLdF9KN28">Timesheet</a></li>
                 <li class="<?php echo ($page == "members" ? "active": "")?>"><a href="members">Members</a></li>
                 <li class="<?php echo ($page == "guide" ? "active": "")?>"><a href="guide">Guide</a></li>
                 <li class="<?php echo ($page == "postEOD" ? "active": "")?>"><a href="postEOD">EOD</a></li>
